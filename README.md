@@ -6,7 +6,7 @@ Putting the collective on the throttle on the flight stick and using sticky Logi
 
 The project consists of three things:
 1. a mechanical design of a collective stick, using only standard parts (no tools or 3D printer required),
-2. a mechanical design of pedals, again only using standart parts,
+2. a mechanical design of pedals, again only using standard parts,
 3. electronics for measuring stick sensors, transmitting the data over 2.4 GHz, along with a hub that presents itself as a normal USB joystick.
 
 # Collective Stick
@@ -19,16 +19,18 @@ Mechanics still WIP.
 
 # Electronics
 
-BOM hub:
+BOM USB joystick hub:
 * Arduino Pro Micro 5V (has USB)
 * nRF24L01+ SPI module (takes 3.3V, hence the next item)
 * NRF24L01+ PCB Adapter (5V to 3.3V)
 * SSD1306 128x64 display module
 
-BOM sensor board:
+BOM wireless sensor board:
 * Arduino Pro Mini 3.3V / 8 MHz
 * nRF24L01+ SPI module (takes 3.3V, hence the Arduino)
 * 3.3V hall sensor connected to Analog in
+* 2xAA battery holder
+* Mini Step-Up/Step-Down Schaltregler 1.8V-5V zu 3.3V
 
 BOM and schematics soon.
 
