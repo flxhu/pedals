@@ -21,8 +21,9 @@ Mechanics still WIP.
 
 BOM hub:
 * Arduino Pro Micro 5V (has USB)
-* nRF24L01+ SPI module (takes 3.3V, hence the Arduino)
-* SSD1306 module
+* nRF24L01+ SPI module (takes 3.3V, hence the next item)
+* NRF24L01+ PCB Adapter (5V to 3.3V)
+* SSD1306 128x64 display module
 
 BOM sensor board:
 * Arduino Pro Mini 3.3V / 8 MHz
