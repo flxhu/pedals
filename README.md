@@ -28,7 +28,8 @@ BOM USB joystick hub:
 BOM wireless sensor board:
 * Arduino Pro Mini 3.3V / 8 MHz  // ATTENTION: mine has an ATmega168, which is relevant when programming
 * nRF24L01+ SPI module (takes 3.3V, hence the Arduino)
-* 3.3V hall sensor connected to Analog in
+* 3.3V hall sensor connected to Analog In Pin A0
+* Switch connected to Digital In Pin 2
 * 2xAA battery holder
 * Mini Step-Up/Step-Down Schaltregler 1.8V-5V zu 3.3V
 
