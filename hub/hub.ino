@@ -79,17 +79,16 @@ const char* DataRateToString(rf24_datarate_e rate) {
   }
 }
 
-uint16_t collectiveHall = 512;
-uint16_t pedalHall = 512;
-
-void renderValue(const char* name, uint16_t hall, int16_t axis) {
+void renderValue(const char* name, int button, uint16_t hall, int16_t axis) {
   int16_t axisNorm = hall / 100;
-  display.println(name);
+  display.print(name);
+  display.print(" ");
+  display.println(button);
   for (int i = 0; i < axisNorm; ++i) {
-    display.print("#");
+    // display.print("#");
   }
   for (int i = 0; i < 10 - axisNorm; ++i) {
-    display.print(".");
+    // display.print(".");
   }  
   display.print(" . ");
   display.println(axis);
@@ -101,8 +100,16 @@ int16_t normalize(uint16_t value, int16_t min, int16_t max) {
   if (value > max) return 32767;
   int16_t midPoint = max - min;
   int16_t factor = 32768 / (midPoint / 2);
-  return (value - min - midPoint/2) * factor;  
+  return (value - min - midPoint/2) * factor;
 }
+
+#define NUM_SENSORS 2
+
+uint16_t sensorAnalogMin[NUM_SENSORS] = {300, 0};
+uint16_t sensorAnalogMax[NUM_SENSORS] = {700, 1024};
+uint16_t sensorAnalogRaw[NUM_SENSORS] = {0, 0};
+uint16_t sensorAnalogNormalized[NUM_SENSORS] = {0, 0};
+int button[NUM_SENSORS] = {0, 0};
 
 int loopCount = 0;
 
@@ -111,19 +118,19 @@ void loop() {
   byte data[5];
   while (radio.available(&pipeno)) {                           
     radio.read(data, 5);
-    if (data[0] == '1') {
-      collectiveHall = ((uint16_t)data[1]) << 8 | (uint16_t)data[2];  
-    }
-    else if (data[0] == '2') {
-      pedalHall = ((uint16_t)data[1]) << 8 | (uint16_t)data[2];  
-    }
+
+    uint16_t analogValue = ((uint16_t)data[1]) << 8 | (uint16_t)data[2];
+    sensorAnalogRaw[data[0]] = analogValue;
+    button[data[0]] = data[3];
   }
 
-  int16_t collectiveValue = normalize(collectiveHall, 300, 700);
-  int16_t pedalValue = normalize(pedalHall, 0, 1024);
+  for (int i = 0; i < NUM_SENSORS; ++i) {
+    sensorAnalogNormalized[i] = 
+        normalize(sensorAnalogRaw[i], sensorAnalogMin[i], sensorAnalogMax[i]);
+  }
   
-  Gamepad.yAxis(collectiveValue);
-  Gamepad.xAxis(pedalValue);
+  Gamepad.yAxis(sensorAnalogNormalized[0]);
+  Gamepad.xAxis(sensorAnalogNormalized[1]);
   Gamepad.write();
   
   if (loopCount++ % 200 != 0) {
@@ -133,8 +140,8 @@ void loop() {
   display.clearDisplay();
   display.setCursor(0, 0);
 
-  renderValue("Collective", collectiveHall, collectiveValue);
-  renderValue("Pedal", pedalHall, pedalValue);
+  renderValue("Collective", button[0], sensorAnalogNormalized[0], sensorAnalogRaw[0]);
+  renderValue("Pedal", button[1], sensorAnalogNormalized[1], sensorAnalogRaw[1]);
   
   if (radio.testRPD()) {
     display.setCursor(110, 0);     // Start at top-left corner
