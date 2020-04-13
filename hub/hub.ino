@@ -1,3 +1,9 @@
+/*
+Written for
+- Arduino Pro Micro 5V (use Arduino Micro target)
+- SSD1306
+- nRF24L01+
+*/
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -13,7 +19,9 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define CSN_PIN 10
 #define CE_PIN 9
-#define RADIO_LEVEL RF24_PA_MIN
+#define RADIO_LEVEL RF24_PA_LOW
+
+#define SCREEN_WIDTH_CHARS 20L
 
 RF24 radio(CE_PIN, CSN_PIN);
 
@@ -79,49 +87,61 @@ const char* DataRateToString(rf24_datarate_e rate) {
   }
 }
 
-void renderValue(const char* name, int button, uint16_t hall, int16_t axis) {
-  int16_t axisNorm = hall / 100;
+void renderValue(const char* name, int button, int16_t normalized, int16_t raw) {
   display.print(name);
   display.print(" ");
   display.println(button);
+  
+  char line_buffer[SCREEN_WIDTH_CHARS];
+  sprintf(line_buffer, "n %7d r %7d", normalized, raw);
+  display.println(line_buffer);
+  
+  int axisNorm = ((int)normalized + 16383) / (32767 / SCREEN_WIDTH_CHARS);
+  display.setTextColor(BLACK, WHITE); 
   for (int i = 0; i < axisNorm; ++i) {
-    // display.print("#");
+    display.print(" ");
   }
+  display.setTextColor(WHITE, BLACK); 
   for (int i = 0; i < 10 - axisNorm; ++i) {
-    // display.print(".");
-  }  
-  display.print(" . ");
-  display.println(axis);
-  display.println(hall);  
+    display.print(" ");
+  }
 }
 
 int16_t normalize(uint16_t value, int16_t min, int16_t max) {
-  if (value < min) return -32767;
-  if (value > max) return 32767;
-  int16_t midPoint = max - min;
-  int16_t factor = 32768 / (midPoint / 2);
-  return (value - min - midPoint/2) * factor;
+  if (value < min) return min;
+  if (value > max) return max;
+  int16_t factor = 32767L / (max - min);
+  return (value - min) * factor - 16383;
 }
 
 #define NUM_SENSORS 2
 
-uint16_t sensorAnalogMin[NUM_SENSORS] = {300, 0};
-uint16_t sensorAnalogMax[NUM_SENSORS] = {700, 1024};
+uint16_t sensorAnalogMin[NUM_SENSORS] = {280, 0};
+uint16_t sensorAnalogMax[NUM_SENSORS] = {760, 1024};
 uint16_t sensorAnalogRaw[NUM_SENSORS] = {0, 0};
-uint16_t sensorAnalogNormalized[NUM_SENSORS] = {0, 0};
+int16_t sensorAnalogNormalized[NUM_SENSORS] = {0, 0};
 int button[NUM_SENSORS] = {0, 0};
 
 int loopCount = 0;
+int iterationsWithData = 0;
 
 void loop() {
+  if (loopCount == 10000) {
+    loopCount = 0;
+  }
+  
   uint8_t pipeno;
   byte data[5];
-  while (radio.available(&pipeno)) {                           
+
+  if (radio.available(&pipeno)) {                           
     radio.read(data, 5);
 
     uint16_t analogValue = ((uint16_t)data[1]) << 8 | (uint16_t)data[2];
     sensorAnalogRaw[data[0]] = analogValue;
     button[data[0]] = data[3];
+    ++iterationsWithData;
+  } else {
+    iterationsWithData = 0;
   }
 
   for (int i = 0; i < NUM_SENSORS; ++i) {
@@ -133,22 +153,29 @@ void loop() {
   Gamepad.xAxis(sensorAnalogNormalized[1]);
   Gamepad.write();
   
-  if (loopCount++ % 200 != 0) {
+  if (++loopCount % 200 != 0) {
     return;
   }
   
   display.clearDisplay();
   display.setCursor(0, 0);
 
-  renderValue("Collective", button[0], sensorAnalogNormalized[0], sensorAnalogRaw[0]);
-  renderValue("Pedal", button[1], sensorAnalogNormalized[1], sensorAnalogRaw[1]);
-  
-  if (radio.testRPD()) {
-    display.setCursor(110, 0);     // Start at top-left corner
-    display.write(0x12);
+  renderValue("Pedal", button[0], sensorAnalogNormalized[0], sensorAnalogRaw[0]);
+  display.println("");
+  renderValue("Collective", button[1], sensorAnalogNormalized[1], sensorAnalogRaw[1]);
+
+  display.setCursor(104, 0);     // Start at top-left corner
+  if (loopCount % 400 == 0) {
+    #if 0
+    if (radio.testRPD()) {
+      display.write("Good");
+    } else {
+      display.print("Weak");
+    }
+    #endif
+    display.print(iterationsWithData);
   } else {
-    display.setCursor(110, 0);     // Start at top-left corner
-    display.print("?");
+    display.print("____");
   }
   display.display();
 }
