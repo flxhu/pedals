@@ -1,3 +1,6 @@
+// Programming notes:
+// - use Arduino Pro or Pro Mini / ATmega168 3.3V / 8 MHz
+
 #include <SPI.h>
 #include <Wire.h>
 #include <RF24.h>
@@ -7,7 +10,7 @@
 
 #define CSN_PIN 10
 #define CE_PIN 9
-#define RADIO_LEVEL RF24_PA_LOW
+#define RADIO_LEVEL RF24_PA_MAX
 #define BUTTON_PIN 2
 #define HALL_PIN A0
 
