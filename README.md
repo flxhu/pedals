@@ -15,7 +15,9 @@ BOM and pictures soon.
 
 # Pedals 
 
-Mechanics still WIP.
+A mostly tool-less construction. Aluminium pipes connected with a module connector system.
+
+![Padels](pedals_1.jpg)
 
 # Current Electronics (ESP32 as Joystick via Bluetooth BLE) in esp32_ble_stick/
 
