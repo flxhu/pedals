@@ -21,6 +21,7 @@ Mechanics still WIP.
 
 BOM:
 * LOLIN32 Lite
+* CJMCU-103 Rotary Angle Sensor Modul Murata SV01A
 
 # Old Electronics (in hub/ and sensor/)
 
