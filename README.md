@@ -17,7 +17,12 @@ BOM and pictures soon.
 
 Mechanics still WIP.
 
-# Electronics
+# Current Electronics (ESP32 as Joystick via Bluetooth BLE) in esp32_ble_stick/
+
+BOM:
+* LOLIN32 Lite
+
+# Old Electronics (in hub/ and sensor/)
 
 BOM USB joystick hub:
 * Arduino Pro Micro 5V (has USB)
