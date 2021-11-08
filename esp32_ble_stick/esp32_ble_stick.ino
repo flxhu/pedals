@@ -26,8 +26,7 @@ boolean configIsRudder = false;
 boolean configIsThrottle = false;
 int16_t configLowerValue;
 int16_t configUpperValue;
-adc_configAttenuation_t configAttenuation;
-
+adc_attenuation_t configAttenuation;
 
 BleGamepad* bleGamepad;
 
@@ -71,8 +70,8 @@ const char* getName() {
 const int64_t MICROS_IN_SECONDS = 1000000LL;
 const int64_t MINUTES_IN_SECONDS = 60LL;
 
-const int64_t WARN_AFTER_SECONDS = 4LL * MINUTES_IN_SECONDS;
-const int64_t SLEEP_AFTER_SECONDS = 5LL * MINUTES_IN_SECONDS;  
+const int64_t WARN_AFTER_SECONDS = 13LL * MINUTES_IN_SECONDS;
+const int64_t SLEEP_AFTER_SECONDS = 15LL * MINUTES_IN_SECONDS;  
 const int WAKEUP_TOUCH_THRESHOLD = 5;
 
 const int TOUCH_ACTIVE_IN_A_ROW = 10;
@@ -110,7 +109,7 @@ void setup() {
  
   pinMode(LED_PIN, OUTPUT);
   
-  analogSetconfigAttenuation(configAttenuation);
+  analogSetAttenuation(configAttenuation);
   analogReadResolution(10);
   setCpuFrequencyMhz(80);
 
