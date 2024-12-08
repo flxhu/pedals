@@ -8,9 +8,6 @@ CUSTOM_PID = myconfig.USB_PID  # Non-registered PID
 PRODUCT_NAME = "My USB Adapter"
 MANUFACTURER_NAME = "Felix"
 
-# This is only one example of a gamepad descriptor.
-# It may not suit your needs, or be supported on your host computer.
-
 GAMEPAD_REPORT_DESCRIPTOR = bytes((
     0x05, 0x01,  # Usage Page (Generic Desktop Ctrls)
     0x09, 0x05,  # Usage (Game Pad)
@@ -37,7 +34,9 @@ GAMEPAD_REPORT_DESCRIPTOR = bytes((
     0xC0,        # End Collection
 ))
 
-supervisor.set_usb_identification(vid=CUSTOM_VID, pid=CUSTOM_PID, manufacturer=MANUFACTURER_NAME, product=PRODUCT_NAME)
+supervisor.set_usb_identification(
+    vid=CUSTOM_VID, pid=CUSTOM_PID,
+    manufacturer=MANUFACTURER_NAME, product=PRODUCT_NAME)
 
 try:
     gamepad = usb_hid.Device(
