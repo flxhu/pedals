@@ -15,6 +15,6 @@ A mostly tool-less construction. Aluminium pipes connected with a module connect
 # Current Electronics (ESP32 as Joystick via Bluetooth BLE) in esp32_ble_stick/
 
 BOM:
-* RP2040 board
+* Waveshare RP2040 Zero board, running CircuitPython
 * SSD 1306 display
 * CJMCU-103 Rotary Angle Sensor Modul Murata SV01A
