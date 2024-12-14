@@ -12,7 +12,7 @@ A mostly tool-less construction. Aluminium pipes connected with a module connect
 
 ![Padels](pedals_1.jpg)
 
-# Current Electronics (ESP32 as Joystick via Bluetooth BLE) in esp32_ble_stick/
+# Current Electronics
 
 BOM:
 * Waveshare RP2040 Zero board, running CircuitPython
